@@ -33,8 +33,17 @@ namespace FSMCalc
         {
             Button btn = sender as Button;
             char item = btn.Text[0];
-            //Console.Beep();
+            int a = ((int)item % 48) * 32 + 700;
+            if (btn.Text[0] >= 48 && btn.Text[0] <= 57)
+                Console.Beep(a, 100);
+            else
+                Console.Beep();
             s.Process(item);
+        }
+
+        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        {
+
         }        
     }
 }

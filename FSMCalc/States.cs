@@ -6,6 +6,11 @@ using System.Threading.Tasks;
 
 namespace FSMCalc
 {
+    public enum StateName
+    {
+        Zero, ComputePending, Compute, AccumulateDigits
+    }
+
     public delegate void ChangeDisplay(string result);
 
     public class States
@@ -27,25 +32,27 @@ namespace FSMCalc
         public char[] equals = { '=' };
         public char[] root = { '√', '²' };
 
-        public string stateName = "Zero";
+        public StateName stateName = StateName.Zero;
 
         public void Process(char item)
         {
             switch (stateName)
             {
-                case "Zero":
+                case StateName.Zero:
                     Zero(item, false);
                     break;
-                case "AccumulateDigits":
-                    AccumulateDigits(item, false);
-                    break;            
-                case "ComputePending":
+                case StateName.ComputePending:
                     ComputePending(item, false);
                     break;
-                case "Compute":
+                case StateName.Compute:
                     Compute(item, false);
                     break;
-            }
+                case StateName.AccumulateDigits:
+                    AccumulateDigits(item, false);
+                    break;
+                default:
+                    break;
+            }            
         }
 
         public void Zero(char item, bool isInput)
@@ -56,7 +63,7 @@ namespace FSMCalc
                 number = "";
                 op = '.';
                 answer = 0;
-                stateName = "Zero";
+                stateName = StateName.Zero;
                 invoker.Invoke(result);
             }
             else
@@ -107,7 +114,7 @@ namespace FSMCalc
                 }
                 else
                     result += item;
-                stateName = "AccumulateDigits";
+                stateName = StateName.AccumulateDigits;
                 invoker.Invoke(result);
             next:;
             }
@@ -132,7 +139,7 @@ namespace FSMCalc
                 invoker.Invoke(answer.ToString());
                 op = item;
                 result = "";
-                stateName = "ComputePending";
+                stateName = StateName.ComputePending;
             }
             else
             {
@@ -150,7 +157,7 @@ namespace FSMCalc
                 result = answer.ToString();                
                 answer = 0;
                 op = '.';
-                stateName = "Compute";
+                stateName = StateName.Compute;
                 invoker.Invoke(result);
             }
             else
